@@ -3,7 +3,7 @@ import ChatRoom from './components/ChatRoom';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 transition-colors">
       <ChatRoom />
     </div>
   );
