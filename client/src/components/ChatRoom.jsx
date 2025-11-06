@@ -5,10 +5,19 @@ import MessageInput from './MessageInput';
 function ChatRoom() {
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [username, setUsername] = useState('');
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // Prompt for username on load
+    const user = prompt('Enter your username:');
+    if (!user || !user.trim()) {
+      alert('Username is required. Please refresh the page.');
+      return;
+    }
+    setUsername(user.trim());
+
     // Create socket connection
     const socket = io('http://localhost:5000');
     socketRef.current = socket;
@@ -17,6 +26,8 @@ function ChatRoom() {
     socket.on('connect', () => {
       setIsConnected(true);
       console.log('Connected to server');
+      // Emit joinChat event with username
+      socket.emit('joinChat', user.trim());
     });
 
     // Handle disconnection
@@ -27,7 +38,26 @@ function ChatRoom() {
 
     // Listen for chat messages
     socket.on('chatMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { type: 'message', content: message },
+      ]);
+    });
+
+    // Listen for user joined events
+    socket.on('userJoined', (joinedUsername) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { type: 'system', content: `${joinedUsername} joined the chat` },
+      ]);
+    });
+
+    // Listen for user left events
+    socket.on('userLeft', (leftUsername) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { type: 'system', content: `${leftUsername} left the chat` },
+      ]);
     });
 
     // Cleanup on unmount
@@ -62,9 +92,13 @@ function ChatRoom() {
           messages.map((message, index) => (
             <div
               key={index}
-              className="bg-gray-100 rounded-lg px-4 py-2 break-words"
+              className={
+                message.type === 'system'
+                  ? 'text-gray-500 italic text-sm text-center py-1'
+                  : 'bg-gray-100 rounded-lg px-4 py-2 break-words'
+              }
             >
-              {message}
+              {message.content}
             </div>
           ))
         )}
