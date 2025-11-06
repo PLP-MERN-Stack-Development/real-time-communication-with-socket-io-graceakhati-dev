@@ -32,6 +32,13 @@ io.on('connection', (socket) => {
   console.log(`User connected. Total users: ${userCount}`);
   console.log(`Socket ID: ${socket.id}`);
 
+  // Listen for chat messages
+  socket.on('chatMessage', (message) => {
+    console.log(`Message received: ${message}`);
+    // Broadcast message to all clients
+    io.emit('chatMessage', message);
+  });
+
   // Handle disconnection
   socket.on('disconnect', () => {
     userCount--;
