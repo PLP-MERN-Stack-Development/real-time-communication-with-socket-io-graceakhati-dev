@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
+import ChatRoom from './components/ChatRoom';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold text-center p-8">
-        Real-time Chat App
-      </h1>
+    <div className="min-h-screen bg-gray-100 py-8">
+      <ChatRoom />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 
