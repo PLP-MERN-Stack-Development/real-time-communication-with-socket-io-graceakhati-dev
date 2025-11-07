@@ -19,7 +19,10 @@ const server = http.createServer(app);
 // Initialize Socket.io with CORS
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: [
+      'https://real-time-communication-with-socket-io-graceakhati-1th8187s7.vercel.app',
+      'http://localhost:5173'
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type'],
@@ -55,7 +58,7 @@ io.on('connection', (socket) => {
     broadcastOnlineUsers();
   });
 
-  // Listen for chat messages
+  // Listen for chat messages (chatMessage event - used by frontend)
   socket.on('chatMessage', (messageData) => {
     const username = users.get(socket.id);
     if (username && messageData) {
@@ -77,6 +80,35 @@ io.on('connection', (socket) => {
       io.emit('chatMessage', {
         username: username,
         text: messageText
+      });
+    }
+  });
+
+  // Listen for send-message event and broadcast receive-message
+  socket.on('send-message', (msg) => {
+    const username = users.get(socket.id);
+    if (username && msg) {
+      // Extract message text (handles both string and object formats)
+      let messageText;
+      if (typeof msg === 'string') {
+        messageText = msg;
+      } else if (msg.text) {
+        messageText = msg.text;
+      } else if (msg.message) {
+        messageText = msg.message;
+      } else {
+        messageText = msg;
+      }
+
+      // Clear typing indicator for this user
+      typingUsers.delete(socket.id);
+      io.emit('typingUsers', Array.from(typingUsers.values()));
+      
+      // Broadcast receive-message to all other clients
+      socket.broadcast.emit('receive-message', {
+        username: username,
+        text: messageText,
+        timestamp: new Date().toISOString()
       });
     }
   });
@@ -111,9 +143,9 @@ io.on('connection', (socket) => {
 });
 
 // Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log('Server listening on port 5000');
+  console.log(`Server listening on port ${PORT}`);
 });
 
 // Export app for testing
