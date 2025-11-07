@@ -23,7 +23,7 @@ function ChatRoom() {
     setUsername(user.trim());
 
     // Create socket connection with proper configuration
-    const socket = io('http://localhost:5000', {
+    const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 5,
