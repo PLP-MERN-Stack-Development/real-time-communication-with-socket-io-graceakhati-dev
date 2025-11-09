@@ -328,13 +328,8 @@ real-time-communication-with-socket-io-graceakhati-dev/
 ```
 
 ## 🎨 Screenshots & Media
-
-Add your screenshots and GIFs to the `screenshots/` directory with the following recommended file names:
-
-- `chat-demo.gif` - Main demo showing real-time chat in action
 - `light-mode.png` - Screenshot of the app in light mode
 - `dark-mode.png` - Screenshot of the app in dark mode
-- `typing-indicator.png` - Screenshot showing typing indicators
 - `online-users.png` - Screenshot of the online users sidebar
 - `mobile-view.png` - Screenshot of mobile responsive design
 - `multi-user-chat.png` - Screenshot showing multiple users chatting
@@ -427,14 +422,7 @@ pkill -f node
 - **Build Tool**: Vite
 - **Package Manager**: npm
 
-## 📝 License
-
-ISC
-
 ## 👤 Author
+Grace Akhati
 
 Built as part of a real-time communication assignment using Socket.io.
-
----
-
-**Note**: Remember to update CORS settings in `server/index.js` after deploying to production, and set the `VITE_SOCKET_URL` environment variable in your client deployment platform.
