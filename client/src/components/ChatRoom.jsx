@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { io } from 'socket.io-client';
+import socket from '../socket/socket';
 
 function ChatRoom() {
   const [isConnected, setIsConnected] = useState(false);
@@ -22,15 +22,7 @@ function ChatRoom() {
     }
     setUsername(user.trim());
 
-    // Create socket connection with proper configuration
-    const socket = io(import.meta.env.VITE_SOCKET_URL || 'https://real-time-chat-server-2is2.onrender.com', {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 20000,
-      forceNew: false,
-    });
+    // Use the centralized socket instance
     socketRef.current = socket;
 
     // Handle connection
