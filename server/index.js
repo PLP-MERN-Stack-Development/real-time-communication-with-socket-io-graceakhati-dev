@@ -6,7 +6,17 @@ const cors = require('cors');
 const app = express();
 
 // Enable CORS for Express routes
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    // Allow all origins for development and production
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // GET "/" route
 app.get('/', (req, res) => {
@@ -16,16 +26,13 @@ app.get('/', (req, res) => {
 // Wrap express app in http server
 const server = http.createServer(app);
 
-// Initialize Socket.io with CORS
+// Initialize Socket.io with CORS - explicitly allow all origins
 const io = new Server(server, {
   cors: {
-    origin: [
-      'https://real-time-communication-with-socket-io-graceakhati-1th8187s7.vercel.app',
-      'http://localhost:5173'
-    ],
-    methods: ['GET', 'POST'],
-    credentials: true,
-    allowedHeaders: ['Content-Type'],
+    origin: "*", // Allow all origins explicitly
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: false, // Set to false when using wildcard origin
+    allowedHeaders: ['Content-Type', 'Authorization'],
   },
 });
 
